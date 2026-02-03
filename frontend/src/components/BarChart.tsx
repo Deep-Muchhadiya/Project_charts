@@ -12,9 +12,9 @@ const BarChart = () => {
       setChartData(data);
     };
 
-    fetchData();
+    void fetchData();
     const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
+    return () => {clearInterval(interval);};
   }, []);
 
   const data = {
