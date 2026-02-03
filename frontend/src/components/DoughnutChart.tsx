@@ -12,10 +12,10 @@ const DoughnutChart = () => {
       setChartData(data);
     };
 
-    fetchData(); // initial load
+    void fetchData(); // initial load
     const interval = setInterval(fetchData, 5000); // auto-refresh
 
-    return () => clearInterval(interval);
+    return () => {clearInterval(interval);};
   }, []);
 
   const data = {
