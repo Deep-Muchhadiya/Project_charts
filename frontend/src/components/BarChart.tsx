@@ -9,7 +9,7 @@ const BarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchUserData();
-      setChartData(data);
+      setChartData  (data);
     };
 
     void fetchData();
@@ -18,9 +18,9 @@ const BarChart = () => {
   }, []);
 
   const data = {
-    labels: chartData.map((item) => item.label),
-    datasets: [
-      {
+    labels  :  chartData.map((item) => item.label),
+    datasets  : [
+      {  
         label: "Users",
         data: chartData.map((item) => item.value),
         backgroundColor: "rgba(54, 162, 235, 0.6)",
