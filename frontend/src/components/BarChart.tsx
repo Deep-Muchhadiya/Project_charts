@@ -5,23 +5,22 @@ import { UserData } from "../types/chart";
 
 const BarChart = () => {
   const [chartData, setChartData] = useState<UserData[]>([]);
-  const [mapData, setMapData] = useState<UserData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchUserData();
-      // setChartData  (data);
+      setChartData(data);
     };
 
     void fetchData();
     const interval = setInterval(fetchData, 5000);
-    return () => {clearInterval(interval);};
+    return () => { clearInterval(interval); };
   }, []);
 
   const data = {
-    // labels  :  chartData.map((item) => item.label),
-    datasets  : [
-      {  
+    labels: chartData.map((item) => item.label),
+    datasets: [
+      {
         label: "Users",
         data: chartData.map((item) => item.value),
         backgroundColor: "rgba(54, 162, 235, 0.6)",
