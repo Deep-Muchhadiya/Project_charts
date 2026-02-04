@@ -1,40 +1,63 @@
 import { Bar } from "react-chartjs-2";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchUserData } from "../services/api";
 import { UserData } from "../types/chart";
 
 const BarChart = () => {
   const [chartData, setChartData] = useState<UserData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchUserData();
+    // AbortController prevents race conditions and memory leaks on unmount
+    const controller = new AbortController();
 
-      setChartData((prev) => [...prev, ...data]); 
+    const fetchData = async () => {
+      try {
+        const data = await fetchUserData({ signal: controller.signal });
+        setChartData(data);
+        setError(null);
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          setError("Failed to sync data.");
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
-    void fetchData();
-    const interval = setInterval(fetchData, 5000);
-    
+    fetchData();
+    const interval = setInterval(fetchData, 30000); // Increased interval for scalability
+
+    return () => {
+      clearInterval(interval);
+      controller.abort(); // Cancel pending requests
+    };
   }, []);
 
-  const data = {
+  // useMemo prevents expensive re-calculations on every re-render
+  const data = useMemo(() => ({
     labels: chartData.map((item) => item.label),
     datasets: [
       {
         label: "Users",
-        data: chartData.map((item) => item.value).reverse(), 
+        data: chartData.map((item) => item.value),
         backgroundColor: "rgba(54, 162, 235, 0.6)",
         borderRadius: 10,
-        borderSkipped: false,
       },
     ],
-  };
+  }), [chartData]);
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true }
+    }
   };
+
+  if (loading && chartData.length === 0) return <div>Loading Analytics...</div>;
+  if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
   return (
     <div style={{ margin: "40px 0" }}>
