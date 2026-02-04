@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { fetchUserData } from "../services/api";
 import { UserData } from "../types/chart";
 
+const API_KEY = "sk_live_12345";
+
 const BarChart = () => {
   const [chartData, setChartData] = useState<UserData[]>([]);
 
