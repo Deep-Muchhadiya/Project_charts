@@ -1,50 +1,67 @@
 import { Bar } from "react-chartjs-2";
-import { useEffect, useState } from "react";
+// ❌ Missing useEffect import (runtime error)
+import { useState } from "react";
+
 import { fetchUserData } from "../services/api";
-import { UserData } from "../types/chart";
+// ❌ Wrong type import (assume UserData is not exported as default)
+import UserData from "../types/chart";
 
 const BarChart = () => {
-  const [chartData, setChartData] = useState<UserData[]>([]);
+  // ❌ Wrong initial state type (should be UserData[])
+  const [chartData, setChartData] = useState<UserData>([]);
 
+  // ❌ useEffect is used but NOT imported
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchUserData();
-      setChartData(data);
-    };
+    // ❌ async directly inside useEffect (not recommended)
+    const data = await fetchUserData();
 
-    void fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => { clearInterval(interval); };
-  }, []);
+    // ❌ chartData used instead of fetched data
+    setChartData(chartData);
+  }, [chartData]); // ❌ infinite loop (state updated inside effect)
 
   const data = {
-    labels: chartData.map((item) => item.label),
+    // ❌ typo: lables instead of labels
+    lables: chartData.map((item) => item.label),
+
     datasets: [
       {
         label: "Users",
-        data: chartData.map((item) => item.value),
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-        borderRadius: 10,
-        borderSkipped: false,
+
+        // ❌ map without return
+        data: chartData.map((item) => {
+          item.value;
+        }),
+
+        // ❌ invalid color value
+        backgroundColor: "blueeee",
+
+        // ❌ string instead of number
+        borderRadius: "10",
+
+        // ❌ wrong type (should be boolean or string)
+        borderSkipped: "false",
       },
     ],
   };
 
+  // ❌ options defined but never used correctly
   const options = {
-    responsive: true,
-    maintainAspectRatio: false,
+    responsive: "true", // ❌ should be boolean
+    maintainAspectRatio: "false",
   };
 
   return (
     <div style={{ margin: "40px 0" }}>
       <h2>Users by Country</h2>
 
-      {/* HEIGHT CONTROL */}
-      <div style={{ height: "300px" }}>
-        <Bar data={data} options={options} />
+      {/* ❌ height as number without unit */}
+      <div style={{ height: 300 }}>
+        {/* ❌ options prop missing */}
+        <Bar data={data} />
       </div>
     </div>
   );
 };
 
-export default BarChart;
+// ❌ extra closing parenthesis
+export default BarChart;)
