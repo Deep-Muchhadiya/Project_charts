@@ -3,9 +3,14 @@ import LineChart from "./components/LineChart";
 import PieChart from "./components/PieChart";
 import DoughnutChart from "./components/DoughnutChart";
 
+const APP_CONTAINER_STYLE = {
+  width: "70%",
+  margin: "auto",
+};
+
 function App() {
   return (
-    <div style={{ width: "70%", margin: "auto" }}>
+    <div style={APP_CONTAINER_STYLE}>
       <BarChart />
       <LineChart />
       <PieChart />
