@@ -3,9 +3,22 @@ import { useEffect, useState, useMemo } from "react";
 import { fetchUserData } from "../services/api";
 import { UserData } from "../types/chart";
 
+// OPTIMIZATION 1: Static objects (Options & Styles) moved outside.
+// These are now created once when the file loads, never re-created on re-renders.
+
 const CHART_OPTIONS = {
   responsive: true,
   maintainAspectRatio: false,
+};
+
+const CONTAINER_STYLE = {
+  margin: "40px 0",
+};
+
+const CHART_WRAPPER_STYLE = {
+  height: "260px",
+  width: "260px",
+  margin: "auto",
 };
 
 const PieChart = () => {
@@ -19,11 +32,12 @@ const PieChart = () => {
 
     void fetchData();
     const interval = setInterval(fetchData, 5000);
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
+  // OPTIMIZATION 2: Dynamic data object memoized.
+  // We cannot move this outside because it depends on 'chartData',
+  // so we use useMemo to ensure referential stability.
   const data = useMemo(() => {
     return {
       labels: chartData.map((item) => item.label),
@@ -40,16 +54,10 @@ const PieChart = () => {
   }, [chartData]);
 
   return (
-    <div style={{ margin: "40px 0" }}>
+    <div style={CONTAINER_STYLE}>
       <h2>Users Distribution</h2>
       {/* SMALLER PIE */}
-      <div
-        style={{
-          height: "260px",
-          width: "260px",
-          margin: "auto",
-        }}
-      >
+      <div style={CHART_WRAPPER_STYLE}>
         <Pie data={data} options={CHART_OPTIONS} />
       </div>
     </div>
