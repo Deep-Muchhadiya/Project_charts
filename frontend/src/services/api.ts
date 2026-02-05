@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UserData } from "../types/chart";
+import { UserData } from "types/chart";
 
 const API_URL = "http://localhost:5000/api"; // Backend URL
 
