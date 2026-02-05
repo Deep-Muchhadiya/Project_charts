@@ -9,13 +9,12 @@ const BarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchUserData();
-
-      setChartData((prev) => [...prev, ...data]); 
+      setChartData(data);
     };
 
     void fetchData();
     const interval = setInterval(fetchData, 5000);
-    
+    return () => { clearInterval(interval); };
   }, []);
 
   const data = {
@@ -23,7 +22,7 @@ const BarChart = () => {
     datasets: [
       {
         label: "Users",
-        data: chartData.map((item) => item.value).reverse(), 
+        data: chartData.map((item) => item.value),
         backgroundColor: "rgba(54, 162, 235, 0.6)",
         borderRadius: 10,
         borderSkipped: false,
@@ -39,11 +38,10 @@ const BarChart = () => {
   return (
     <div style={{ margin: "40px 0" }}>
       <h2>Users by Country</h2>
+      {/* HEIGHT CONTROL */}
       <div style={{ height: "300px" }}>
         <Bar data={data} options={options} />
       </div>
     </div>
   );
 };
-
-export default BarChart;
