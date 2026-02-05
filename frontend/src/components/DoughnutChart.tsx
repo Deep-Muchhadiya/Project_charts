@@ -1,7 +1,22 @@
 import { Doughnut } from "react-chartjs-2";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchUserData } from "../services/api";
 import { UserData } from "../types/chart";
+
+const CHART_OPTIONS = {
+  responsive: true,
+  maintainAspectRatio: false,
+};
+
+const CONTAINER_STYLE = {
+  margin: "40px 0",
+};
+
+const CHART_WRAPPER_STYLE = {
+  height: "260px",
+  width: "260px",
+  margin: "auto",
+};
 
 const DoughnutChart = () => {
   const [chartData, setChartData] = useState<UserData[]>([]);
@@ -12,44 +27,33 @@ const DoughnutChart = () => {
       setChartData(data);
     };
 
-    void fetchData(); // initial load
-    const interval = setInterval(fetchData, 5000); // auto-refresh
-
-    return () => {clearInterval(interval);};
+    void fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-  const data = {
-    labels: chartData.map((item) => item.label),
-    datasets: [
-      {
-        label: "Users",
-        data: chartData.map((item) => item.value),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-        borderColor: "#ffffff",
-        borderWidth: 2,
-        borderRadius: 10,   // rounded edges
-        cutout: "70%",      // thickness of doughnut
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-  };
+  const data = useMemo(() => {
+    return {
+      labels: chartData.map((item) => item.label),
+      datasets: [
+        {
+          label: "Users",
+          data: chartData.map((item) => item.value),
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+          borderColor: "#ffffff",
+          borderWidth: 2,
+          borderRadius: 10,
+          cutout: "70%",
+        },
+      ],
+    };
+  }, [chartData]);
 
   return (
-    <div style={{ margin: "40px 0" }}>
+    <div style={CONTAINER_STYLE}>
       <h2>Users Distribution (Doughnut)</h2>
-
-      <div
-        style={{
-          height: "260px",
-          width: "260px",
-          margin: "auto",
-        }}
-      >
-        <Doughnut data={data} options={options} />
+      <div style={CHART_WRAPPER_STYLE}>
+        <Doughnut data={data} options={CHART_OPTIONS} />
       </div>
     </div>
   );

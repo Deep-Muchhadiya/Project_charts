@@ -1,7 +1,20 @@
 import { Bar } from "react-chartjs-2";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { fetchUserData } from "../services/api";
 import { UserData } from "../types/chart";
+
+const CHART_OPTIONS = {
+  responsive: true,
+  maintainAspectRatio: false,
+};
+
+const CONTAINER_STYLE = {
+  margin: "40px 0",
+};
+
+const CHART_WRAPPER_STYLE = {
+  height: "300px",
+};
 
 const BarChart = () => {
   const [chartData, setChartData] = useState<UserData[]>([]);
@@ -14,33 +27,29 @@ const BarChart = () => {
 
     void fetchData();
     const interval = setInterval(fetchData, 5000);
-    return () => { clearInterval(interval); };
+    return () => clearInterval(interval);
   }, []);
 
-  const data = {
-    labels: chartData.map((item) => item.label),
-    datasets: [
-      {
-        label: "Users",
-        data: chartData.map((item) => item.value),
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-        borderRadius: 10,
-        borderSkipped: false,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-  };
+  const data = useMemo(() => {
+    return {
+      labels: chartData.map((item) => item.label),
+      datasets: [
+        {
+          label: "Users",
+          data: chartData.map((item) => item.value),
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
+          borderRadius: 10,
+          borderSkipped: false, // Ensures rounded corners on all sides if desired
+        },
+      ],
+    };
+  }, [chartData]);
 
   return (
-    <div style={{ margin: "40px 0" }}>
+    <div style={CONTAINER_STYLE}>
       <h2>Users by Country</h2>
-      {/* HEIGHT CONTROL */}
-      <div style={{ height: "300px" }}>
-        <Bar data={data} options={options} />
+      <div style={CHART_WRAPPER_STYLE}>
+        <Bar data={data} options={CHART_OPTIONS} />
       </div>
     </div>
   );
