@@ -1,7 +1,7 @@
 import { Pie } from "react-chartjs-2";
 import { useEffect, useState, useMemo } from "react";
-import { fetchUserData } from "../services/api";
-import { UserData } from "../types/chart";
+import { fetchUserData } from "services/api";
+import { UserData } from "types/chart";
 
 const CHART_OPTIONS = {
   responsive: true,
